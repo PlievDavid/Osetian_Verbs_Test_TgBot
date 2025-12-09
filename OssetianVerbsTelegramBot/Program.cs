@@ -1,13 +1,13 @@
 ﻿using Telegram.Bot;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
-using static System.Net.Mime.MediaTypeNames;
+using DotNetEnv;
 
 internal class Program
 {
     static async Task Main(string[] args)
     {
-        string token = "8202340976:AAF5bEoNcRkwyXu6xIPNu-TGWp6fm0ws1HY";
+        string token = Environment.GetEnvironmentVariable("TELEGRAM_BOT_TOKEN");
         var bot = new TelegramBotClient(token);
 
         Console.WriteLine("Бот запущен!");
@@ -28,5 +28,26 @@ internal class Program
         await client.SendMessage(message.Chat.Id, message.Text);
         if (message.Text.StartsWith("/start"))
             await StartCommand.ExecuteAsync(client, message.Chat.Id);
+    }
+
+    public static string GetBotToken()
+    {
+        var token = Environment.GetEnvironmentVariable("TELEGRAM_BOT_TOKEN");
+        if (token != null)
+        {
+            return token;
+        }
+
+        if (File.Exists(".env"))
+        {
+            Env.Load();
+
+            token = Environment.GetEnvironmentVariable("TELEGRAM_BOT_TOKEN");
+            if (token != null)
+            {
+                return token;
+            }
+        }
+        throw new Exception("Токен бота не найден!");
     }
 }
