@@ -2,6 +2,7 @@
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using DotNetEnv;
+using Telegram.Bot.Types.ReplyMarkups;
 
 internal class Program
 {
@@ -28,9 +29,16 @@ internal class Program
         var message = update.Message;
         if (message != null)
         {
-            await client.SendMessage(message.Chat.Id, message.Text);
+            await client.SendMessage(message.Chat.Id, message.Text, replyMarkup: new ReplyKeyboardRemove());
+
+
             if (message.Text.StartsWith("/start"))
                 await StartCommand.ExecuteAsync(client, update);
+        }
+
+        if (update.CallbackQuery != null)
+        {
+            await StartCommand.HandleCallbackQueryAsync(client, update.CallbackQuery);
         }
     }
 
