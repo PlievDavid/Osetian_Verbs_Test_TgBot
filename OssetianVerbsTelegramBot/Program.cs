@@ -7,7 +7,8 @@ internal class Program
 {
     static async Task Main(string[] args)
     {
-        string token = Environment.GetEnvironmentVariable("TELEGRAM_BOT_TOKEN");
+        string token = GetBotToken();
+
         var bot = new TelegramBotClient(token);
 
         Console.WriteLine("Бот запущен!");
@@ -25,9 +26,12 @@ internal class Program
     private static async Task UpdateHandler(ITelegramBotClient client, Update update, CancellationToken token)
     {
         var message = update.Message;
-        await client.SendMessage(message.Chat.Id, message.Text);
-        if (message.Text.StartsWith("/start"))
-            await StartCommand.ExecuteAsync(client, message.Chat.Id);
+        if (message != null)
+        {
+            await client.SendMessage(message.Chat.Id, message.Text);
+            if (message.Text.StartsWith("/start"))
+                await StartCommand.ExecuteAsync(client, update);
+        }
     }
 
     public static string GetBotToken()
