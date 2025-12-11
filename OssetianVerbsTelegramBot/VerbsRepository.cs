@@ -14,7 +14,14 @@ namespace OssetianVerbsTelegramBot
         public VerbsRepository(string path) 
         {
             Path = path;
-            LoadVerbs();
+            try
+            {
+                LoadVerbs();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         public void LoadVerbs()
